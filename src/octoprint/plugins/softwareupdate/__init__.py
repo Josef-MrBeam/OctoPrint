@@ -113,12 +113,13 @@ class SoftwareUpdatePlugin(octoprint.plugin.BlueprintPlugin,
 						self._logger.exception("Error while retrieving update information from plugin {name}".format(**locals()))
 					else:
 						for key, default_config in hook_checks.items():
-							if key in effective_configs or key == "octoprint":
-								if key == name:
-									self._logger.warn("Software update hook {} provides check for itself but that was already registered by {} - overwriting that third party registration now!".format(name, check_providers.get(key, "unknown hook")))
-								else:
-									self._logger.warn("Software update hook {} tried to overwrite config for check {} but that was already configured elsewhere".format(name, key))
-									continue
+							#Disabled so the MrBeam Plugin can change this config
+							# if key in effective_configs or key == "octoprint":
+							# 	if key == name:
+							# 		self._logger.warn("Software update hook {} provides check for itself but that was already registered by {} - overwriting that third party registration now!".format(name, check_providers.get(key, "unknown hook")))
+							# 	else:
+							# 		self._logger.warn("Software update hook {} tried to overwrite config for check {} but that was already configured elsewhere".format(name, key))
+							# 		continue
 
 							check_providers[key] = name
 
@@ -226,19 +227,24 @@ class SoftwareUpdatePlugin(octoprint.plugin.BlueprintPlugin,
 			"checks": {
 				"octoprint": {
 					"type": "github_release",
-					"user": "foosel",
+					"user": "mrbeam",
 					"repo": "OctoPrint",
 					"method": "pip",
-					"pip": "https://github.com/foosel/OctoPrint/archive/{target_version}.zip",
+					"pip": "https://github.com/mrbeam/OctoPrint/archive/{target_version}.zip",
 					"update_script": default_update_script,
 					"restart": "octoprint",
-					"stable_branch": dict(branch="master", commitish=["master"], name="Stable"),
-					"prerelease_branches": [dict(branch="rc/maintenance",
-					                             commitish=["rc/maintenance"],             # maintenance RCs
-					                             name="Maintenance RCs"),
-					                        dict(branch="rc/devel",
-					                             commitish=["rc/maintenance", "rc/devel"], # devel & maintenance RCs
-					                             name="Devel RCs")]
+					"stable_branch": dict(branch="mrbeam2-stable", commitish=["mrbeam2-stable"], name="Stable"),
+					"prerelease_branches": [
+											dict(branch="develop",
+												 commitish=["mrbeam2-stable", "develop", "mrbeam2-alpha", "mrbeam2-beta"],
+												 name="Develop"),
+											dict(branch="mrbeam2-alpha",
+					                             commitish=["mrbeam2-stable", "mrbeam2-alpha", "mrbeam2-beta"],
+					                             name="Alpha"),
+					                        dict(branch="mrbeam2-beta",
+					                             commitish=["mrbeam2-stable", "mrbeam2-beta"],
+					                             name="Beta")
+											],
 				},
 			},
 			"pip_command": None,
