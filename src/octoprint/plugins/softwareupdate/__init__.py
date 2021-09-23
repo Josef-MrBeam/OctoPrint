@@ -233,6 +233,7 @@ class SoftwareUpdatePlugin(octoprint.plugin.BlueprintPlugin,
 					"pip": "https://github.com/mrbeam/OctoPrint/archive/{target_version}.zip",
 					"update_script": default_update_script,
 					"restart": "octoprint",
+					"prerelease": False,
 					"stable_branch": dict(branch="mrbeam2-stable", commitish=["mrbeam2-stable"], name="Stable"),
 					"prerelease_branches": [
 											dict(branch="develop",
@@ -330,8 +331,8 @@ class SoftwareUpdatePlugin(octoprint.plugin.BlueprintPlugin,
 
 		if "octoprint_type" in data:
 			octoprint_type = data["octoprint_type"]
-
-			if octoprint_type == "github_release":
+			self._logger.debug("octoprint data - {}".format(data))
+			if octoprint_type == "github_release" or octoprint_type == "github_commit":
 				self._settings.set(["checks", "octoprint", "type"], octoprint_type, defaults=defaults)
 				self._settings.set(["checks", "octoprint", "method"], "pip", defaults=defaults)
 				updated_octoprint_check_config = True
