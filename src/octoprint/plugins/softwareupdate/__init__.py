@@ -113,13 +113,13 @@ class SoftwareUpdatePlugin(octoprint.plugin.BlueprintPlugin,
 						self._logger.exception("Error while retrieving update information from plugin {name}".format(**locals()))
 					else:
 						for key, default_config in hook_checks.items():
-							#Disabled so the MrBeam Plugin can change this config
-							# if key in effective_configs or key == "octoprint":
-							# 	if key == name:
-							# 		self._logger.warn("Software update hook {} provides check for itself but that was already registered by {} - overwriting that third party registration now!".format(name, check_providers.get(key, "unknown hook")))
-							# 	else:
-							# 		self._logger.warn("Software update hook {} tried to overwrite config for check {} but that was already configured elsewhere".format(name, key))
-							# 		continue
+							# removed key="octoprint" so the MrBeam Plugin can change this config
+							if key in effective_configs:
+								if key == name:
+									self._logger.warn("Software update hook {} provides check for itself but that was already registered by {} - overwriting that third party registration now!".format(name, check_providers.get(key, "unknown hook")))
+								else:
+									self._logger.warn("Software update hook {} tried to overwrite config for check {} but that was already configured elsewhere".format(name, key))
+									continue
 
 							check_providers[key] = name
 
@@ -326,7 +326,7 @@ class SoftwareUpdatePlugin(octoprint.plugin.BlueprintPlugin,
 		if "octoprint_type" in data:
 			octoprint_type = data["octoprint_type"]
 			self._logger.debug("octoprint data - {}".format(data))
-			if octoprint_type == "github_release" or octoprint_type == "github_commit":
+			if octoprint_type in ["github_release", "github_commit"]:
 				self._settings.set(["checks", "octoprint", "type"], octoprint_type, defaults=defaults)
 				self._settings.set(["checks", "octoprint", "method"], "pip", defaults=defaults)
 				updated_octoprint_check_config = True
