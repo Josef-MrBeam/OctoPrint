@@ -127,7 +127,12 @@ class SoftwareUpdatePlugin(octoprint.plugin.BlueprintPlugin,
 							effective_config = default_config
 							if key in self._configured_checks:
 								yaml_config = self._configured_checks[key]
+
+								#remove the type of the octoprint update config if one is set via the octoprint.plugin.softwareupdate.check_config hook so it can be changed from the MrBeamPlugin
+								if key == "octoprint" and "type" in default_config and self.get_settings_defaults()["checks"]["octoprint"]["type"] == yaml_config["type"]:
+									yaml_config.pop("type")
 								effective_config = dict_merge(default_config, yaml_config)
+
 
 								# Make sure there's nothing persisted in that check that shouldn't be persisted
 								#
@@ -232,6 +237,7 @@ class SoftwareUpdatePlugin(octoprint.plugin.BlueprintPlugin,
 					"pip": "https://github.com/mrbeam/OctoPrint/archive/{target_version}.zip",
 					"update_script": default_update_script,
 					"restart": "octoprint",
+					"type": "github_release",
 					"stable_branch": dict(branch="mrbeam2-stable", commitish=["mrbeam2-stable"], name="Stable"),
 					"prerelease_branches": [dict(branch="mrbeam2-alpha",
 					                             commitish=["mrbeam2-stable", "mrbeam2-alpha", "mrbeam2-beta"],
