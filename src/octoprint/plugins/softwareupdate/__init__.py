@@ -331,7 +331,6 @@ class SoftwareUpdatePlugin(octoprint.plugin.BlueprintPlugin,
 
 		if "octoprint_type" in data:
 			octoprint_type = data["octoprint_type"]
-			self._logger.debug("octoprint data - {}".format(data))
 			if octoprint_type in ["github_release", "github_commit"]:
 				self._settings.set(["checks", "octoprint", "type"], octoprint_type, defaults=defaults)
 				self._settings.set(["checks", "octoprint", "method"], "pip", defaults=defaults)
