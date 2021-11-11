@@ -100,7 +100,7 @@ class SoftwareUpdatePlugin(octoprint.plugin.BlueprintPlugin,
 		with self._configured_checks_mutex:
 			if self._refresh_configured_checks or self._configured_checks is None:
 				self._refresh_configured_checks = False
-				self._configured_checks = self._settings.get(["checks"], merged=True)
+				self._configured_checks = self._settings.get(["checks"], merged=True) #config yaml merged with default settings
 
 				update_check_hooks = self._plugin_manager.get_hooks("octoprint.plugin.softwareupdate.check_config")
 				check_providers = self._settings.get(["check_providers"], merged=True)
@@ -128,10 +128,17 @@ class SoftwareUpdatePlugin(octoprint.plugin.BlueprintPlugin,
 							if key in self._configured_checks:
 								yaml_config = self._configured_checks[key]
 
-								#remove the type of the octoprint update config if one is set via the octoprint.plugin.softwareupdate.check_config hook so it can be changed from the MrBeamPlugin
-								if key == "octoprint" and "type" in default_config and self.get_settings_defaults()["checks"]["octoprint"]["type"] == yaml_config["type"]:
-									yaml_config.pop("type")
-								effective_config = dict_merge(default_config, yaml_config)
+								if key == "octoprint":
+									# for octoprint override the default settings update information with the one from the hook and then override it with the one from the config file
+									# the default methode can here not be used as the softwareupdate plugin saves the default update information of octoprint inside the default settings
+									# this always override all changes done by the hook
+									yaml_config = self._settings.get(["checks", "octoprint"],
+																				 merged=False)  # octoprint update info from config yaml
+									effective_config_defaults_hook = dict_merge(self.get_settings_defaults()["checks"]["octoprint"], default_config) # merge default octoprint update info with the one from the hook
+									effective_config = dict_merge(effective_config_defaults_hook, yaml_config) # merge octoprint update info from the config file with the privious merged one
+								else:
+									#this is the default way it will override the hook settings with the one that is done in the config yaml
+									effective_config = dict_merge(default_config, yaml_config)
 
 
 								# Make sure there's nothing persisted in that check that shouldn't be persisted
@@ -231,13 +238,13 @@ class SoftwareUpdatePlugin(octoprint.plugin.BlueprintPlugin,
 		return {
 			"checks": {
 				"octoprint": {
+					"type": "github_release",
 					"user": "mrbeam",
 					"repo": "OctoPrint",
 					"method": "pip",
 					"pip": "https://github.com/mrbeam/OctoPrint/archive/{target_version}.zip",
 					"update_script": default_update_script,
 					"restart": "octoprint",
-					"type": "github_release",
 					"stable_branch": dict(branch="mrbeam2-stable", commitish=["mrbeam2-stable"], name="Stable"),
 					"prerelease_branches": [dict(branch="mrbeam2-alpha",
 					                             commitish=["mrbeam2-stable", "mrbeam2-alpha", "mrbeam2-beta"],
