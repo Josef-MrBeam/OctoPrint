@@ -73,9 +73,6 @@ def perform_update(target, check, target_version, log_cb=None, online=True, forc
 	logger.debug(u"Target: %s, executing pip install %s" % (target, install_arg))
 	pip_args = ["install", install_arg]
 
-	if "pip_upgrade_flag" in check and check["pip_upgrade_flag"]:
-		pip_args += ["-U"] # use upgrade to reinstall even with no version number change
-
 	if "dependency_links" in check and check["dependency_links"]:
 		pip_args += ["--process-dependency-links"]
 

@@ -221,10 +221,6 @@ Update methods
   * ``pip``: An URL to provide to ``pip install`` in order to perform the
     update. May contain a placeholder ``{target}`` which will be the most
     recent version specifier as retrieved from the update check.
-
-    * ``pip_upgrade_flag``: ``True`` or ``False``, default ``False``, set to
-      ``True`` to set the :code:`-U` flag for the pip install command, this will
-      do an update to the code even if the versionnumber of the package don't change
   * ``update_script``: A script to execute in order to perform the update. May
     contain placeholders ``{target}`` (for the most recent version specified
     as retrieved from the update check), ``{branch}`` for the branch to switch
