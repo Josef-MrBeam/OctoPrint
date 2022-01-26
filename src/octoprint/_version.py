@@ -24,7 +24,7 @@ def get_keywords():
     # setup.py/versioneer.py will grep for the variable names, so they must
     # each be defined on a line of their own. _version.py will just call
     # get_keywords().
-    git_refnames = "$Format:%d$"
+    git_refnames = "$Format:%(describe[:tags]"
     git_full = "$Format:%H$"
     keywords = {"refnames": git_refnames, "full": git_full}
     return keywords
@@ -41,7 +41,7 @@ def get_config():
     # _version.py
     cfg = VersioneerConfig()
     cfg.VCS = "git"
-    cfg.style = "pep440-tag"
+    cfg.style = "pep440-post"
     cfg.tag_prefix = ""
     cfg.parentdir_prefix = ""
     cfg.versionfile_source = "src/octoprint/_version.py"
