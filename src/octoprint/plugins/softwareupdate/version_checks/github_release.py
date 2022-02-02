@@ -120,7 +120,7 @@ def _get_latest_release(user, repo, compare_type,
 
 	comparable_factory = _get_comparable_factory(compare_type,
 	                                             force_base=force_base)
-	sort_key = lambda release: comparable_factory(_get_sanitized_version(release["tag_name"]))
+	sort_key = lambda release: comparable_factory(release["tag_name"])
 
 	return _filter_out_latest(releases,
 	                          sort_key=sort_key,
@@ -253,8 +253,8 @@ def _is_current(release_information, compare_type, custom=None, force_base=True)
 	comparable_factory = _get_comparable_factory(compare_type, force_base=force_base)
 	comparator = _get_comparator(compare_type, custom=custom)
 
-	sanitized_local = _get_sanitized_version(release_information["local"]["value"])
-	sanitized_remote = _get_sanitized_version(release_information["remote"]["value"])
+	sanitized_local = release_information["local"]["value"]
+	sanitized_remote = release_information["remote"]["value"]
 
 	try:
 		return comparator(comparable_factory(sanitized_local),
