@@ -120,7 +120,7 @@ def _get_latest_release(user, repo, compare_type,
 
 	comparable_factory = _get_comparable_factory(compare_type,
 	                                             force_base=force_base)
-	sort_key = lambda release: comparable_factory(release["tag_name"])
+	sort_key = lambda release: comparable_factory(_get_sanitized_version(release["tag_name"]))
 
 	return _filter_out_latest(releases,
 	                          sort_key=sort_key,
@@ -136,12 +136,12 @@ def _get_sanitized_version(version_string):
 	    >>> _get_sanitized_version(None)
 	    >>> _get_sanitized_version("1.2.15")
 	    '1.2.15'
-	    >>> _get_sanitized_version("1.2.15-dev12")
-	    '1.2.15'
+	    >>> _get_sanitized_version("v1.2.15-dev12")
+	    '1.2.15-dev12'
 	"""
 
-	if version_string is not None and "-" in version_string:
-		version_string = version_string[:version_string.find("-")]
+	if version_string[0].lower() == "v":
+		version_string = version_string[1:]
 	return version_string
 
 
@@ -253,8 +253,8 @@ def _is_current(release_information, compare_type, custom=None, force_base=True)
 	comparable_factory = _get_comparable_factory(compare_type, force_base=force_base)
 	comparator = _get_comparator(compare_type, custom=custom)
 
-	sanitized_local = release_information["local"]["value"]
-	sanitized_remote = release_information["remote"]["value"]
+	sanitized_local = _get_sanitized_version(release_information["local"]["value"])
+	sanitized_remote = _get_sanitized_version(release_information["remote"]["value"])
 
 	try:
 		return comparator(comparable_factory(sanitized_local),
