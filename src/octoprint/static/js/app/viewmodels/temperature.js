@@ -303,7 +303,7 @@ $(function() {
             var plotInfo = self._getPlotInfo();
             if (plotInfo === undefined) return;
 
-            var newMax = Math.max(Math.max.apply(null, plotInfo.max) * 1.1, 310);
+            var newMax = Math.max(Math.max.apply(null, plotInfo.max) * 1.1, 50);
             if (newMax !== self.plot.getAxes().yaxis.max) {
                 // re-init (because flot apparently has NO way to change the max value of an axes :/)
                 self._initializePlot(true, plotInfo);
@@ -328,7 +328,7 @@ $(function() {
             var options = {
                 yaxis: {
                     min: 0,
-                    max: Math.max(Math.max.apply(null, plotInfo.max) * 1.1, 310),
+                    max: Math.max(Math.max.apply(null, plotInfo.max) * 1.1, 50),
                     ticks: 10
                 },
                 xaxis: {
@@ -376,7 +376,7 @@ $(function() {
             var heaterOptions = self.heaterOptions();
             if (!heaterOptions) return undefined;
 
-            var maxTemps = [310/1.1];
+            var maxTemps = [50/1.1];
             var now = Date.now();
 
             var showFahrenheit = self._shallShowFahrenheit();
